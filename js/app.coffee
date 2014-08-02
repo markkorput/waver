@@ -8,21 +8,19 @@ class @App extends Backbone.Model
 		canvas = document.getElementById 'targetCanvas'
 		paper.setup canvas
 
-		path = new paper.Path()
-		path.strokeColor = 'black'
-		start = new paper.Point(100, 100)
-		path.moveTo(start)
-		path.lineTo(start.add([ 700, -50 ]))
-		paper.view.draw()
+		@waveOps = new WaveOps()
 
-	update: ->
+		paper.view.on 'frame', @update
+		# resize event is not firing?!
+		paper.view.on 'resize', @resize		
+
+	update: =>
 		return if @get('paused') == true
 		@trigger 'update'
 		@draw()
-
-		requestAnimationFrame =>
-			@update()
 	
 	draw: ->
-		# nothing here
+		# console.log 'draw'
 
+	resize: (e) =>
+		console.log e 
