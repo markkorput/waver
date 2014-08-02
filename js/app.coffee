@@ -4,23 +4,11 @@ class @App extends Backbone.Model
 
 	setup: ->
 		# @controls = new Controls(duration: @timer.get('duration'))
-
 		canvas = document.getElementById 'targetCanvas'
 		paper.setup canvas
 
 		@waveOps = new WaveOps()
-
-		paper.view.on 'frame', @update
-		# resize event is not firing?!
-		paper.view.on 'resize', @resize		
-
-	update: =>
-		return if @get('paused') == true
-		@trigger 'update'
-		@draw()
-	
-	draw: ->
-		# console.log 'draw'
-
-	resize: (e) =>
-		console.log e 
+		test_func = =>
+			@waveOps.drip(Math.random() * paper.view.viewSize.width, Math.random() * 700)
+			setTimeout(test_func, 1000)
+		setTimeout(test_func, 300)

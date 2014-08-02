@@ -2,7 +2,8 @@
 (function() {
   var _ref, _ref1,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   this.Wave = (function(_super) {
     __extends(Wave, _super);
@@ -28,7 +29,7 @@
       path.moveTo(start = new paper.Point(0, paper.view.viewSize.height * 0.5));
       segmentWidth = paper.view.viewSize.width / (this.get('amount') + 1);
       _.each(_.range(this.get('amount')), function(i) {
-        return path.lineTo(start.add([segmentWidth * i, Math.sin(Math.PI * 0.5 * i) * 20]));
+        return path.lineTo(start.add([segmentWidth * i, 0]));
       });
       path.lineTo(start.add([paper.view.viewSize.width, 0]));
       path.strokeColor = 'white';
@@ -43,16 +44,44 @@
     __extends(WaveOps, _super);
 
     function WaveOps() {
+      this._dripFrame = __bind(this._dripFrame, this);
       _ref1 = WaveOps.__super__.constructor.apply(this, arguments);
       return _ref1;
     }
 
     WaveOps.prototype.initialize = function() {
       if (!this.get('target')) {
-        return this.set({
+        this.set({
           target: new Wave()
         });
       }
+      return paper.view.on('frame', this._dripFrame);
+    };
+
+    WaveOps.prototype.drip = function(x, force) {
+      var path,
+        _this = this;
+      path = this.get('target').get('path');
+      return _.each(path.segments, function(segment, idx) {
+        var dist, point;
+        point = segment.point;
+        dist = Math.abs(point.x - x);
+        point.ty || (point.ty = point.y);
+        return point.ty += Math.sin(dist) * force;
+      });
+    };
+
+    WaveOps.prototype._dripFrame = function(e) {
+      var path, ty,
+        _this = this;
+      path = this.get('target').get('path');
+      ty = paper.view.viewSize.height * 0.5;
+      return _.each(path.segments, function(segment, idx) {
+        var point;
+        point = segment.point;
+        point.ty = ty + ((point.ty || point.y) - ty) * 0.95;
+        return point.y += (point.ty - point.y) * 0.1;
+      });
     };
 
     return WaveOps;
