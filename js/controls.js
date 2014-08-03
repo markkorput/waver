@@ -16,39 +16,19 @@
     }
 
     Controls.prototype.initialize = function() {
-      var folder, item,
+      var item,
         _this = this;
       this.destroy();
       $(document).on('mousedown', this.mousedown);
       $(document).on('keydown', this.keydown);
       this.gui = new dat.GUI();
       this.data = new (function(model) {
-        this.timeline = 0;
-        this.loop = true;
-        this.playing = true;
-        return this.duration = model.get('duration') || 10000;
-      })(this);
-      folder = this.gui.addFolder('Animation');
-      folder.open();
-      item = folder.add(this.data, 'playing');
-      item.listen();
-      item.onChange(function(val) {
-        return _this.trigger('toggle-playing', val);
+        return this.playing = true;
       });
-      item = folder.add(this.data, 'timeline', 0, 100);
-      item.listen();
-      item.onChange(function(val) {
-        return _this.trigger('timeline', val / 100);
-      });
-      item = folder.add(this.data, 'loop');
-      item.listen();
-      item.onChange(function(val) {
-        return _this.trigger('toggle-loop', val);
-      });
-      item = folder.add(this.data, 'duration', 0, 50000);
+      item = this.gui.add(this.data, 'playing');
       item.listen();
       return item.onChange(function(val) {
-        return _this.trigger('duration', val);
+        return _this.trigger('toggle-playing', val);
       });
     };
 

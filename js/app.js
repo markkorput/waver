@@ -19,11 +19,28 @@
     App.prototype.setup = function() {
       var canvas, test_func,
         _this = this;
+      this.controls = new Controls();
+      this.controls.on('toggle-playing', function(val) {
+        if (val) {
+          return paper.view.play();
+        } else {
+          paper.view.pause();
+          return console.log('paused');
+        }
+      });
       canvas = document.getElementById('targetCanvas');
       paper.setup(canvas);
       this.waveOps = new WaveOps();
+      this.rect = new paper.Rectangle(0, 0, 10, 10);
+      this.rect.stroke;
+      $('canvas').mousedown(function(e) {
+        return _this.waveOps.drip(new paper.Point(e.offsetX, e.offsetY), 200 + Math.random() * 100);
+      });
+      return;
       test_func = function() {
-        _this.waveOps.drip(Math.random() * paper.view.viewSize.width, Math.random() * 700);
+        var pos;
+        pos = new paper.Point(Math.random() * paper.view.viewSize.width, paper.view.viewSize.height * 0.5);
+        _this.waveOps.drip(pos, Math.random() * 30);
         return setTimeout(test_func, 1000);
       };
       return setTimeout(test_func, 300);

@@ -18,7 +18,7 @@
     };
 
     Wave.prototype.initialize = function() {
-      var path, segmentWidth, start,
+      var dx, path, y,
         _this = this;
       if (!(path = this.get('path'))) {
         path = new paper.Path();
@@ -26,12 +26,19 @@
           path: path
         });
       }
-      path.moveTo(start = new paper.Point(0, paper.view.viewSize.height * 0.5));
-      segmentWidth = paper.view.viewSize.width / (this.get('amount') + 1);
+      if (this.get('amount') < 2) {
+        dx = paper.view.viewSize.width;
+      } else {
+        dx = paper.view.viewSize.width / (this.get('amount') - 1);
+      }
+      y = paper.view.viewSize.height * 0.5;
       _.each(_.range(this.get('amount')), function(i) {
-        return path.lineTo(start.add([segmentWidth * i, 0]));
+        var segment;
+        segment = path.add(new paper.Point(dx * i, y));
+        if (i === 0 || i === _this.get('amount') - 1) {
+          return segment.fixed = true;
+        }
       });
-      path.lineTo(start.add([paper.view.viewSize.width, 0]));
       path.strokeColor = 'white';
       return path.smooth();
     };
@@ -58,30 +65,61 @@
       return paper.view.on('frame', this._dripFrame);
     };
 
-    WaveOps.prototype.drip = function(x, force) {
-      var path,
-        _this = this;
+    WaveOps.prototype.drip = function(pos, force) {
+      var path, point, segment;
       path = this.get('target').get('path');
-      return _.each(path.segments, function(segment, idx) {
-        var dist, point;
-        point = segment.point;
-        dist = Math.abs(point.x - x);
-        point.ty || (point.ty = point.y);
-        return point.ty += Math.sin(dist) * force;
-      });
+      segment = _.sample(path.segments);
+      if (segment.fixed) {
+        return;
+      }
+      point = segment.point;
+      point.y += force;
+      if (segment.previous && !segment.previous.point.fixed) {
+        segment.previous.point.y += force * -0.8;
+      }
+      if (segment.next && !segment.next.point.fixed) {
+        return segment.next.point.y += force * -0.8;
+      }
     };
 
     WaveOps.prototype._dripFrame = function(e) {
-      var path, ty,
+      var dynamics, path,
         _this = this;
+      dynamics = {
+        mass: 80,
+        friction: 0.9,
+        strength: 0.1,
+        restLength: 100
+      };
+      dynamics.invMass = 1 / dynamics.mass;
+      dynamics.mamb = dynamics.invMass * dynamics.invMass;
       path = this.get('target').get('path');
-      ty = paper.view.viewSize.height * 0.5;
-      return _.each(path.segments, function(segment, idx) {
-        var point;
+      _.each(path.segments, function(segment, idx) {
+        var delta, deltaX, dist, dy, force, normDistStrength, point, ty;
+        if (segment.fixed) {
+          return;
+        }
         point = segment.point;
-        point.ty = ty + ((point.ty || point.y) - ty) * 0.95;
-        return point.y += (point.ty - point.y) * 0.1;
+        force = 1 - dynamics.friction * 0.0001;
+        ty = paper.view.viewSize.height * 0.5;
+        dy = (point.y - (point.py || point.y)) * force;
+        point.py = point.y;
+        point.y = Math.max(point.y + dy, 0);
+        if (!segment.previous) {
+          return;
+        }
+        delta = point.y - segment.previous.point.y;
+        deltaX = point.x - segment.previous.point.x;
+        if (delta === 0) {
+          return;
+        }
+        dist = Math.abs(Math.sqrt(delta * delta + deltaX * deltaX));
+        normDistStrength = (dist - dynamics.restLength) / (dist * dynamics.mamb) * dynamics.strength;
+        delta = delta * normDistStrength * dynamics.invMass * 0.2;
+        point.y += delta;
+        return segment.previous.point.y -= delta;
       });
+      return path.smooth();
     };
 
     return WaveOps;
