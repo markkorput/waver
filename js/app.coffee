@@ -15,12 +15,14 @@ class @App extends Backbone.Model
 		paper.setup canvas
 
 		@waveOps = new WaveOps()
+		@waveOps2 = new WaveOps()
 
 		@rect = new paper.Rectangle(0, 0, 10, 10)
 		@rect.stroke
 
 		$('canvas').mousedown (e) =>
-			@waveOps.drip(new paper.Point(e.offsetX, e.offsetY), 200+Math.random()*100)
+			@waveOps.drip(new paper.Point(e.offsetX, e.offsetY))
+			@waveOps2.drip(new paper.Point(e.offsetX, e.offsetY*0.95))
 
 		return
 		test_func = =>

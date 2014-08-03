@@ -31,10 +31,12 @@
       canvas = document.getElementById('targetCanvas');
       paper.setup(canvas);
       this.waveOps = new WaveOps();
+      this.waveOps2 = new WaveOps();
       this.rect = new paper.Rectangle(0, 0, 10, 10);
       this.rect.stroke;
       $('canvas').mousedown(function(e) {
-        return _this.waveOps.drip(new paper.Point(e.offsetX, e.offsetY), 200 + Math.random() * 100);
+        _this.waveOps.drip(new paper.Point(e.offsetX, e.offsetY));
+        return _this.waveOps2.drip(new paper.Point(e.offsetX, e.offsetY * 0.95));
       });
       return;
       test_func = function() {
