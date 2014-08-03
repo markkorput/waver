@@ -30,13 +30,16 @@
       });
       canvas = document.getElementById('targetCanvas');
       paper.setup(canvas);
+      paper.view.on('frame', function() {
+        return TWEEN.update();
+      });
       this.waveOps = new WaveOps();
       this.waveOps2 = new WaveOps();
       this.rect = new paper.Rectangle(0, 0, 10, 10);
       this.rect.stroke;
       $('canvas').mousedown(function(e) {
         _this.waveOps.drip(new paper.Point(e.offsetX, e.offsetY));
-        return _this.waveOps2.drip(new paper.Point(e.offsetX, e.offsetY * 0.95));
+        return _this.waveOps2.drip(new paper.Point(paper.view.size.width - e.offsetX, paper.view.size.height - e.offsetY));
       });
       return;
       test_func = function() {

@@ -18,7 +18,7 @@
     };
 
     Wave.prototype.initialize = function() {
-      var dx, path, y,
+      var clr, dx, path, segment1, segment2, segment3, segment4, y,
         _this = this;
       if (!(path = this.get('path'))) {
         path = new paper.Path();
@@ -36,11 +36,27 @@
         var segment;
         segment = path.add(new paper.Point(dx * i, y));
         if (i === 0 || i === _this.get('amount') - 1) {
-          return segment.fixed = true;
+          segment.fixed = true;
+          return segment.linear = true;
         }
       });
-      path.strokeColor = 'white';
-      return path.smooth();
+      segment1 = path.add(new paper.Point(paper.view.viewSize.width + 10, paper.view.viewSize.height * 0.5));
+      segment1.fixed = true;
+      segment2 = path.add(new paper.Point(paper.view.viewSize.width + 10, paper.view.viewSize.height + 10));
+      segment2.fixed = true;
+      segment3 = path.add(new paper.Point(-10, paper.view.viewSize.height + 10));
+      segment3.fixed = true;
+      segment4 = path.add(new paper.Point(-10, paper.view.viewSize.height * 0.5));
+      segment4.fixed = true;
+      path.closePath(true);
+      clr = new paper.Color(Math.random(), Math.random(), Math.random());
+      path.strokeColor = clr;
+      path.fillColor = clr;
+      path.smooth();
+      segment1.linear = true;
+      segment2.linear = true;
+      segment3.linear = true;
+      return segment4.linear = true;
     };
 
     return Wave;
@@ -66,15 +82,29 @@
     };
 
     WaveOps.prototype.drip = function(pos) {
-      return this.dripPos = pos;
+      var t, that;
+      that = this;
+      return t = new TWEEN.Tween({
+        pathHeight: this.pathHeight
+      }).to({
+        pathHeight: pos.y
+      }, 250).easing(TWEEN.Easing.Exponential.Out).onUpdate(function(a, b, c) {
+        return that.pathHeight = this.pathHeight;
+      }).start();
     };
 
     WaveOps.prototype._dripFrame = function(event) {
       var _this = this;
       this.pathHeight || (this.pathHeight = 0);
-      this.pathHeight += (paper.view.center.y - (this.dripPos || paper.view.center).y - this.pathHeight) / 10;
+      this.pathHeight = this.pathHeight * 0.99;
+      if (this.pathHeight < 0.5) {
+        this.pathHeight = 0;
+      }
       return _.each(this.get('target').get('path').segments, function(segment, i) {
         var sinHeight, sinSeed, yPos;
+        if (segment.fixed) {
+          return;
+        }
         sinSeed = event.count + (i + i % 10) * 100;
         sinHeight = Math.sin(sinSeed / 200) * _this.pathHeight;
         yPos = Math.sin(sinSeed / 100) * sinHeight + paper.view.viewSize.height / 2;
