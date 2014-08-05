@@ -33,8 +33,7 @@
       paper.view.on('frame', function() {
         return TWEEN.update();
       });
-      this.waveOps = new WaveOps();
-      this.waveOps2 = new WaveOps();
+      this.waveSiner = new WaveSiner();
       this.rect = new paper.Rectangle(0, 0, 10, 10);
       this.rect.stroke;
       $('canvas').mousedown(function(e) {

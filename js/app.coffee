@@ -16,8 +16,10 @@ class @App extends Backbone.Model
 
 		paper.view.on 'frame', -> TWEEN.update()
 
-		@waveOps = new WaveOps()
-		@waveOps2 = new WaveOps()
+		# @waveOps = new WaveOps()
+		# @waveOps2 = new WaveOps()
+		@waveSiner = new WaveSiner()
+
 
 		@rect = new paper.Rectangle(0, 0, 10, 10)
 		@rect.stroke
