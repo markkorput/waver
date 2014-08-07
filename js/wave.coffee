@@ -68,6 +68,7 @@ class @Wave extends Backbone.Model
       @pointByX(coords[0]).y = coords[1]
     path.smooth()
 
+
 class @WaveOps extends Backbone.Model
   initialize: ->
     # if we didn't get a target, we'll just create our own
@@ -104,17 +105,20 @@ class @WaveSiner extends Backbone.Model
     waveLength: 80
     amplitude: 10
     flatline: 0
+    seed: 0
 
   initialize: ->
     # if we didn't get a target, we'll just create our own
     @set(target: new Wave(amount: 0)) if !@get 'target'
     paper.view.on 'frame', @_frame
     @set(flatline: paper.view.viewSize.height*0.5)
+    @set(seed: Math.random()*1000.0)
 
   _frame: (event) =>
     @set
-      amplitude: Math.sin(event.count * 0.05) * 100
-      waveLength: 80 + Math.sin(event.count * 0.001) * 30
+      amplitude: Math.sin(event.count * 0.05 + @get('seed')) * 100
+      waveLength: 80 + Math.sin(event.count * 0.001 + @get('seed')) * 30
+      root: -30 + Math.sin(event.count * 0.03 + @get('seed')) * 30
 
     root = @get('root')
     length = @get('waveLength')

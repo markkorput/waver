@@ -18,7 +18,7 @@ class @App extends Backbone.Model
 
 		# @waveOps = new WaveOps()
 		# @waveOps2 = new WaveOps()
-		@waveSiner = new WaveSiner()
+		@waveSiners = [new WaveSiner(), new WaveSiner(), new WaveSiner(), new WaveSiner(), new WaveSiner(), new WaveSiner()]
 
 
 		@rect = new paper.Rectangle(0, 0, 10, 10)

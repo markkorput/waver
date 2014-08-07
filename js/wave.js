@@ -159,7 +159,8 @@
       root: 0,
       waveLength: 80,
       amplitude: 10,
-      flatline: 0
+      flatline: 0,
+      seed: 0
     };
 
     WaveSiner.prototype.initialize = function() {
@@ -171,8 +172,11 @@
         });
       }
       paper.view.on('frame', this._frame);
-      return this.set({
+      this.set({
         flatline: paper.view.viewSize.height * 0.5
+      });
+      return this.set({
+        seed: Math.random() * 1000.0
       });
     };
 
@@ -180,8 +184,9 @@
       var amp, flat, length, root,
         _this = this;
       this.set({
-        amplitude: Math.sin(event.count * 0.05) * 100,
-        waveLength: 80 + Math.sin(event.count * 0.001) * 30
+        amplitude: Math.sin(event.count * 0.05 + this.get('seed')) * 100,
+        waveLength: 80 + Math.sin(event.count * 0.001 + this.get('seed')) * 30,
+        root: -30 + Math.sin(event.count * 0.03 + this.get('seed')) * 30
       });
       root = this.get('root');
       length = this.get('waveLength');

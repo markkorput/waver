@@ -33,7 +33,7 @@
       paper.view.on('frame', function() {
         return TWEEN.update();
       });
-      this.waveSiner = new WaveSiner();
+      this.waveSiners = [new WaveSiner(), new WaveSiner(), new WaveSiner(), new WaveSiner(), new WaveSiner(), new WaveSiner()];
       this.rect = new paper.Rectangle(0, 0, 10, 10);
       this.rect.stroke;
       $('canvas').mousedown(function(e) {
