@@ -78,9 +78,9 @@ class @WaveOps extends Backbone.Model
   drip: (pos) ->
     # @dripPos = pos
     # @pathHeight = pos.y
-    
+
     that = this
-    t = new TWEEN.Tween(pathHeight: @pathHeight) 
+    t = new TWEEN.Tween(pathHeight: @pathHeight)
       .to({pathHeight: pos.y}, 250)
       .easing( TWEEN.Easing.Exponential.Out )
       .onUpdate (a,b,c) ->
@@ -104,14 +104,14 @@ class @WaveSiner extends Backbone.Model
     root: 0
     waveLength: 80
     amplitude: 10
-    flatline: 0
+    flatline: undefined
     seed: 0
 
   initialize: ->
     # if we didn't get a target, we'll just create our own
     @set(target: new Wave(amount: 0)) if !@get 'target'
     paper.view.on 'frame', @_frame
-    @set(flatline: paper.view.viewSize.height*0.5)
+    @set(flatline: paper.view.viewSize.height*0.5) if @get('flatline') == undefined
     @set(seed: Math.random()*1000.0)
 
   _frame: (event) =>

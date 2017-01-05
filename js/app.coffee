@@ -16,10 +16,7 @@ class @App extends Backbone.Model
 
 		paper.view.on 'frame', -> TWEEN.update()
 
-		# @waveOps = new WaveOps()
-		# @waveOps2 = new WaveOps()
-		@waveSiners = [new WaveSiner(), new WaveSiner(), new WaveSiner(), new WaveSiner(), new WaveSiner(), new WaveSiner()]
-
+		@waveSiners = [new WaveSiner(flatline: 400))
 
 		@rect = new paper.Rectangle(0, 0, 10, 10)
 		@rect.stroke
@@ -37,4 +34,3 @@ class @App extends Backbone.Model
 			@waveOps.drip(pos, Math.random() * 30)
 			setTimeout(test_func, 1000)
 		setTimeout(test_func, 300)
-

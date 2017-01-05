@@ -159,7 +159,7 @@
       root: 0,
       waveLength: 80,
       amplitude: 10,
-      flatline: 0,
+      flatline: void 0,
       seed: 0
     };
 
@@ -172,9 +172,11 @@
         });
       }
       paper.view.on('frame', this._frame);
-      this.set({
-        flatline: paper.view.viewSize.height * 0.5
-      });
+      if (this.get('flatline') === void 0) {
+        this.set({
+          flatline: paper.view.viewSize.height * 0.5
+        });
+      }
       return this.set({
         seed: Math.random() * 1000.0
       });
